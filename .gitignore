@@ -10,5 +10,9 @@ wheels/
 .venv
 .env
 
-# Emacs backups
-.backups
+# Editor backups
+.backups/
+**/.backups/
+
+# Temporary editor files
+*~
