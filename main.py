@@ -38,6 +38,9 @@ def generate_content(client: OpenAI, messages: list[dict[str,str]], verbose: boo
         print("User prompt:", messages[0]["content"])
         print("Prompt tokens:", response.usage.prompt_tokens)
         print("Response tokens:", response.usage.completion_tokens)
+
+
+
     print("Response:")
     print(response.choices[0].message.content)
 
