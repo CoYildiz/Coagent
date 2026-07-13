@@ -1,6 +1,7 @@
 import os
 
-def get_file_content(working_directory: str, file_path: str) -> str:
+def write_file(working_directory: str, file_path: str, content: str) -> str:
+
 
     try:
         # Working directory'nin mutlak yolu
@@ -19,24 +20,23 @@ def get_file_content(working_directory: str, file_path: str) -> str:
 
         if not valid_target_file:
             return (
-                f'Error: Cannot read "{file_path}" '
+                f'Error: Cannot write to "{file_path}" '
                 "as it is outside the permitted working directory"
             )
 
-        if not os.path.isfile(target_file):
-            return f'Error: File not found or is not a regular file: "{file_path}"'
-
-        # Read the context of file
+        if os.path.isdir(target_file):
+            return f'Error: Cannot write to "{file_path}" as it is a directory'
+        # parent dir and making directory
+        parent_directory = os.path.dirname(target_file)
         
-        MAX_CHARS = 10000
+        os.makedirs(parent_directory, exist_ok=True)
+        
+        with open(target_file, "w") as f:
+            f.write(content)
+            
 
-
-        with open(target_file, "r") as f:
-            file_content_string = f.read(MAX_CHARS)
-            if f.read(1):
-                file_content_string+=f"[...File \"{file_path}\" truncated at {MAX_CHARS} characters]"
-
-        return file_content_string
+        return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
         
     except Exception as e:
         return f"Error: {e}"
+
