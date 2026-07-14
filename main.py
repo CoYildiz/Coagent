@@ -1,9 +1,11 @@
 import argparse
 import os
+import json
 
 from dotenv import load_dotenv
-from httpx import _content
 from openai import OpenAI
+from prompts import system_prompt
+from call_function import available_functions
 
 
 def main() -> None:
@@ -22,8 +24,10 @@ def main() -> None:
         api_key=api_key,
     )
     messages = [
-        {"role": "user", "content": args.user_prompt},
+    {"role": "system", "content": system_prompt},
+    {"role": "user", "content": args.user_prompt},
     ]
+    
     generate_content(client, messages, args.verbose)
 
 
@@ -31,6 +35,7 @@ def generate_content(client: OpenAI, messages: list[dict[str,str]], verbose: boo
     response = client.chat.completions.create(
         model="openrouter/free",
         messages=messages,
+        tools=available_functions,
     )
     if not response.usage:
         raise RuntimeError("API response appears to be malformed")
@@ -40,10 +45,14 @@ def generate_content(client: OpenAI, messages: list[dict[str,str]], verbose: boo
         print("Response tokens:", response.usage.completion_tokens)
 
 
-
-    print("Response:")
-    print(response.choices[0].message.content)
-
+    message = response.choices[0].message
+    if message.tool_calls:
+        for tool_call in message.tool_calls:
+            function_args = json.loads(tool_call.function.arguments or "{}")
+            print(f"Calling function: {tool_call.function.name}({function_args})")
+    else:
+        print(message.content)
+    
 
 if __name__ == "__main__":
     main()
