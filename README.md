@@ -1,6 +1,7 @@
 # AI Agent
+This project was created for educational purposes only.
 
-A lightweight AI coding agent built with Python and LLM function calling.
+The agent can read, modify, and execute files inside the configured working directory. Although basic safety mechanisms are implemented, this project should **not be used on large or important codebases** or trusted with sensitive files.
 
 This project explores how modern AI coding assistants work internally by allowing an LLM to interact with a local codebase through controlled tools.
 
